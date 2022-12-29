@@ -6,13 +6,13 @@ import (
 	"os"
 	"testing"
 
+	"github.com/InjectiveLabs/memongo/memongolog"
+	"github.com/InjectiveLabs/memongo/mongobin"
+	"github.com/InjectiveLabs/memongo/mongobin/mockAfero"
 	"github.com/golang/mock/gomock"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/tryvium-travels/memongo/memongolog"
-	"github.com/tryvium-travels/memongo/mongobin"
-	"github.com/tryvium-travels/memongo/mongobin/mockAfero"
 )
 
 func TestGetOrDownload(t *testing.T) {

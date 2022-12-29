@@ -1,4 +1,4 @@
-module github.com/tryvium-travels/memongo
+module github.com/InjectiveLabs/memongo
 
 go 1.17
 
