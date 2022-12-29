@@ -20,6 +20,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const mongoConnectionTemplate = "mongodb://localhost:%d/?directConnection=true"
+
 // Server represents a running MongoDB server
 type Server struct {
 	cmd        *exec.Cmd
@@ -169,9 +171,8 @@ func StartWithOptions(opts *Options) (*Server, error) {
 
 	// ---------- START OF REPLICA CODE ----------
 	if opts.ShouldUseReplica {
-		logger.Debugf("Starting mongo replica")
 		ctx := context.Background()
-		connectionURL := fmt.Sprintf("mongodb://localhost:%d/?directConnection=true", opts.Port)
+		connectionURL := fmt.Sprintf(mongoConnectionTemplate, opts.Port)
 		client, err := mongo.Connect(ctx, options.Client().ApplyURI(connectionURL))
 		if err != nil {
 			logger.Warnf("error while connect to localhost database: %w", err)
