@@ -173,14 +173,19 @@ func StartWithOptions(opts *Options) (*Server, error) {
 		connectionURL := fmt.Sprintf("mongodb://localhost:%d", opts.Port)
 		client, err := mongo.Connect(ctx, options.Client().ApplyURI(connectionURL))
 		if err != nil {
-			logger.Warnf("error while connect to localhost database: %v", err)
+			logger.Warnf("error while connect to localhost database: %w", err)
+			return nil, err
+		}
+
+		if err := client.Ping(ctx, nil); err != nil {
+			logger.Warnf("error while ping to localhost database: %w", err)
 			return nil, err
 		}
 
 		var result bson.M
 		err = client.Database("admin").RunCommand(ctx, bson.D{{Key: "rs.initiate", Value: 1}}).Decode(&result)
 		if err != nil {
-			logger.Warnf("error while init replica set: %v", err)
+			logger.Warnf("error while init replica set: %w", err)
 			return nil, err
 		}
 
