@@ -169,6 +169,7 @@ func StartWithOptions(opts *Options) (*Server, error) {
 
 	// ---------- START OF REPLICA CODE ----------
 	if opts.ShouldUseReplica {
+		logger.Debugf("Starting mongo replica")
 		ctx := context.Background()
 		connectionURL := fmt.Sprintf("mongodb://localhost:%d", opts.Port)
 		client, err := mongo.Connect(ctx, options.Client().ApplyURI(connectionURL))
@@ -186,6 +187,11 @@ func StartWithOptions(opts *Options) (*Server, error) {
 		err = client.Database("admin").RunCommand(ctx, bson.D{{Key: "rs.initiate", Value: 1}}).Decode(&result)
 		if err != nil {
 			logger.Warnf("error while init replica set: %w", err)
+			return nil, err
+		}
+
+		if err := client.Disconnect(ctx); err != nil {
+			logger.Warnf("error while disconnect from localhost database: %w", err)
 			return nil, err
 		}
 
