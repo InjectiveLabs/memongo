@@ -171,7 +171,7 @@ func StartWithOptions(opts *Options) (*Server, error) {
 	if opts.ShouldUseReplica {
 		logger.Debugf("Starting mongo replica")
 		ctx := context.Background()
-		connectionURL := fmt.Sprintf("mongodb://localhost:%d", opts.Port)
+		connectionURL := fmt.Sprintf("mongodb://localhost:%d/?directConnection=true", opts.Port)
 		client, err := mongo.Connect(ctx, options.Client().ApplyURI(connectionURL))
 		if err != nil {
 			logger.Warnf("error while connect to localhost database: %w", err)
@@ -184,7 +184,7 @@ func StartWithOptions(opts *Options) (*Server, error) {
 		}
 
 		var result bson.M
-		err = client.Database("admin").RunCommand(ctx, bson.D{{Key: "rs.initiate", Value: 1}}).Decode(&result)
+		err = client.Database("admin").RunCommand(ctx, bson.D{{Key: "replSetInitiate", Value: nil}}).Decode(&result)
 		if err != nil {
 			logger.Warnf("error while init replica set: %w", err)
 			return nil, err
