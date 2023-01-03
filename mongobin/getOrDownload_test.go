@@ -2,6 +2,7 @@ package mongobin_test
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"testing"
@@ -53,7 +54,6 @@ func TestGetOrDownload(t *testing.T) {
 }
 
 func TestGetOrDownloadDifferentFilesystems(t *testing.T) {
-
 	FS := afero.NewMemMapFs() // afero.NewOsFs()
 
 	ctrl := gomock.NewController(t)
@@ -92,6 +92,7 @@ func TestGetOrDownloadDifferentFilesystems(t *testing.T) {
 
 	// First call should download the file
 	path, err := mongobin.GetOrDownloadMongod(spec.GetDownloadURL(), cacheDir, memongolog.New(nil, memongolog.LogLevelDebug))
+	fmt.Println("path:", path, "err", err)
 	require.NoError(t, err)
 
 	assert.Equal(t, cacheDir+"/mongodb-osx-ssl-x86_64-4_0_5_tgz_d50ef2155b/mongod", path)
