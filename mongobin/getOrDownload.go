@@ -144,6 +144,7 @@ func saveFile(mongodPath string, tarReader *tar.Reader, logger *memongolog.Logge
 	}
 
 	renameErr := Afs.Rename(mongodTmpFile.Name(), mongodPath)
+	fmt.Println("called rename, err:", renameErr)
 	if renameErr != nil {
 		linkErr := &os.LinkError{}
 		if errors.As(renameErr, &linkErr) {
