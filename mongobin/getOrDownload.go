@@ -104,7 +104,6 @@ func GetOrDownloadMongod(urlStr string, cachePath string, logger *memongolog.Log
 			if err != nil {
 				return "", err
 			}
-
 			break
 		}
 	}
