@@ -106,6 +106,7 @@ func TestGetOrDownloadDifferentFilesystems(t *testing.T) {
 
 	// Second call should used the cached file
 	path2, err := mongobin.GetOrDownloadMongod(spec.GetDownloadURL(), cacheDir, memongolog.New(nil, memongolog.LogLevelDebug))
+	fmt.Println("path:", path2, "err", err)
 	require.NoError(t, err)
 
 	assert.Equal(t, path, path2)
