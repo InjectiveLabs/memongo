@@ -82,7 +82,7 @@ func GetOrDownloadMongod(urlStr string, cachePath string, logger *memongolog.Log
 		return "", fmt.Errorf("error seeking back to start of file: %s", seekErr)
 	}
 
-	var readBytes = make([]byte, 10)
+	var readBytes = make([]byte, 4096)
 	n, err := tgzTempFile.Read(readBytes)
 	if err != nil {
 		return "", err
