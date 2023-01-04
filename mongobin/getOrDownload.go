@@ -33,6 +33,11 @@ func init() {
 // at the given URL. If the URL has not yet been downloaded, it's downloaded
 // and saved the the cache. If it has been downloaded, the existing mongod
 // path is returned.
+/*
+Flow: URL (download url) -> check existence
+	exist: return mongo path
+	non-exist: http download -> save bin/mongod
+*/
 func GetOrDownloadMongod(urlStr string, cachePath string, logger *memongolog.Logger) (string, error) {
 	dirname, dirErr := directoryNameForURL(urlStr)
 	if dirErr != nil {
@@ -101,7 +106,6 @@ func GetOrDownloadMongod(urlStr string, cachePath string, logger *memongolog.Log
 
 		if strings.HasSuffix(nextFile.Name, "bin/mongod") {
 			err := saveFile(path.Join(dirPath, filepath.Base(nextFile.Name)), tarReader, logger)
-			fmt.Println("save file error:", err)
 			if err != nil {
 				return "", err
 			}
@@ -144,7 +148,6 @@ func saveFile(mongodPath string, tarReader *tar.Reader, logger *memongolog.Logge
 	}
 
 	renameErr := Afs.Rename(mongodTmpFile.Name(), mongodPath)
-	fmt.Println("called rename, err:", renameErr)
 	if renameErr != nil {
 		linkErr := &os.LinkError{}
 		if errors.As(renameErr, &linkErr) {
@@ -158,11 +161,11 @@ func saveFile(mongodPath string, tarReader *tar.Reader, logger *memongolog.Logge
 
 			content, err := Afs.ReadFile(mongodTmpFile.Name())
 			if err != nil {
-				fmt.Println("ERROR:", err)
+				return fmt.Errorf("read file err: %w", err)
 			}
 			_, copyErr := mongodFile.Write(content)
 			if copyErr != nil {
-				fmt.Errorf("error copying mongod binary from %s to %s: %s", mongodTmpFile.Name(), mongodPath, copyErr)
+				return fmt.Errorf("error copying mongod binary from %s to %s: %w", mongodTmpFile.Name(), mongodPath, copyErr)
 			}
 		}
 	}
